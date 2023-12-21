@@ -20,13 +20,50 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor (dir) {
+    this.isDir = true
+    if (dir !== undefined) this.isDir = dir
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  isLetter (str) {
+    return str.length === 1 && str.match(/[a-zA-Z]/i)
+  }
+  encrypt(str, key) {
+    if(typeof str === 'undefined' || typeof key === 'undefined') {
+      throw new Error('Incorrect arguments!')
+    }
+    str = str.toUpperCase()
+    key = key.toUpperCase()
+    let result = ''
+    for (let i = 0, j = 0; i < str.length; i += 1) {
+      const letter = str.charAt(i)
+      if(this.isLetter(letter)) {
+        result += String.fromCharCode((letter.charCodeAt(0) + key.charCodeAt(j) - 2 * 65) % 26 + 65)
+        j = ++j % key.length
+      } else {
+        result += letter
+      }
+    }
+    if(this.isDir === false) result = result.split('').reverse().join('')
+    return result
+  }
+  decrypt(str, key) {
+    if(typeof str === 'undefined' || typeof key === 'undefined') {
+      throw new Error('Incorrect arguments!')
+    }
+    str = str.toUpperCase()
+    key = key.toUpperCase()
+    let result = ''
+    for (let i = 0, j = 0; i < str.length; i += 1) {
+      const letter = str.charAt(i)
+      if(this.isLetter(letter)) {
+        result += String.fromCharCode(90 - (25 - (letter.charCodeAt(0) - key.charCodeAt(j))) % 26)
+        j = ++j % key.length
+      } else {
+        result += letter
+      }
+    }
+    if(this.isDir === false) result = result.split('').reverse().join('')
+    return result
   }
 }
 
